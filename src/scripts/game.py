@@ -2,7 +2,6 @@
 
 import random
 import os
-from time import sleep
 
 from src.scripts.terminal_utils import loading_animation, set_text_color
 
@@ -117,14 +116,26 @@ def start_terminal_game():
             continue
         if (choices.index(first_player_choice) - choices.index(second_player_choice)) % 3 == 1:
             if playing_against_machine:
-                print(loading_animation(duration = 5, loading_str = f"{set_text_color(94, 'You win!')} (Restarting in 5 seconds", suffix = ")"))
+                print(loading_animation(
+                    duration = 5,
+                    prefix = f"{set_text_color(94, 'You win!')} (Restarting in 5 seconds",
+                    suffix = ")"))
             else:
-                print(loading_animation(duration = 5, loading_str = f"{set_text_color(94, 'First player wins!')} (Restarting in 5 seconds", suffix = ")"))
+                print(loading_animation(
+                    duration = 5,
+                    prefix = f"{set_text_color(94, 'First player wins!')} (Restarting in 5 seconds",
+                    suffix = ")"))
         else:
             if playing_against_machine:
-                print(loading_animation(duration = 5, loading_str = f"{set_text_color(91, 'Computer wins!')} (Restarting in 5 seconds", suffix = ")"))
+                print(loading_animation(
+                    duration = 5,
+                    prefix = f"{set_text_color(91, 'Computer wins!')} (Restarting in 5 seconds",
+                    suffix = ")"))
             else:
-                print(loading_animation(duration = 5, loading_str = f"{set_text_color(91, 'Second player wins!')} (Restarting in 5 seconds", suffix = ")"))
+                print(loading_animation(
+                    duration = 5,
+                    prefix = f"{set_text_color(91, 'Second player wins!')} (Restarting in 5 seconds",
+                    suffix = ")"))
         clear_cmd()
         print("Type 'stop' to end the game at any time.\n")
 

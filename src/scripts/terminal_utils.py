@@ -1,6 +1,10 @@
 """Module for terminal utilities."""
 
 import os
+from time import time
+
+LOADING_STYLE1 = [".  ", ".. ", "..."]
+LOADING_STYLE2 = ["|", "/", "-", "\\"]
 
 def get_input(prompt: str) -> str:
     """Helper function to get user input."""
@@ -47,22 +51,29 @@ def clear_previous_line(lines: int = 1):
     clear_line()
 
 def loading_animation(
-    duration: int = 2, 
-    interval: float = 0.25, 
-    loading_str = "Loading", 
-    suffix: str = "", 
-    animation_frames: list = [".  ", ".. ", "..."]
+    duration: int = 2,
+    interval: float = 0.25,
+    prefix: str = "Loading",
+    suffix: str = "",
+    animation_frames: list[str] = LOADING_STYLE1
     ):
-    """Displays a simple loading animation for the specified duration."""
-    import time
+    """
+    Displays a simple loading animation for the specified duration.
+    
+    Args:
+        duration (int): Total duration of the animation in seconds.
+        interval (float): Time between frame updates in seconds.
+        prefix (str): String to display before the animation frames.
+        suffix (str): String to display after the animation frames.
+        animation_frames (list[str]): List of strings representing animation frames.
+    """
     start_time = time.time()
     i = 0
     while time.time() - start_time < duration:
-        print(f"{loading_str}{animation_frames[i]}{suffix}", end="\r")
+        print(f"{prefix}{animation_frames[i]}{suffix}", end="\r")
         i = (i + 1) % len(animation_frames)
         time.sleep(interval)
     clear_line()
-    
 def set_text_color(color_code: int, string: str = "") -> str:
     """
     Sets the terminal text color using ANSI escape codes.
@@ -80,4 +91,4 @@ def set_text_color(color_code: int, string: str = "") -> str:
         print(set_text_color(34, "This text is blue"))
         print(set_text_color(93, "This text is bright yellow"))
     """
-    return(f"\033[{color_code}m{string}\033[0m")
+    return f"\033[{color_code}m{string}\033[0m"
