@@ -1,3 +1,5 @@
+"""Module for the Rock-Paper-Scissors terminal game logic."""
+
 import random
 
 choices = ['rock', 'paper', 'scissors']
