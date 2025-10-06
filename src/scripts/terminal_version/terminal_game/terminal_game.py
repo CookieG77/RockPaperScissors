@@ -3,24 +3,26 @@
 import random
 import os
 
-from src.scripts.terminal_utils.terminal_utils import set_text_color, print_animation
-
 try:
-    # normal import (package context)
-    from ..terminal_utils.terminal_utils import (
+    # normal import (package context) - use relative imports when possible
+    from src.scripts.terminal_utils.terminal_utils import (
+        set_text_color,
+        print_animation,
         get_input,
         clear_cmd,
         move_cursor_up,
         clear_previous_line,
     )
-except ImportError:
+except Exception:
     # fallback for direct execution (not for production use)
     import sys
     import pathlib
 
-    repo_root = pathlib.Path(__file__).resolve().parents[2]  # go up to the project root
+    repo_root = pathlib.Path(__file__).resolve().parents[4]  # go up to the project root
     sys.path.insert(0, str(repo_root))
-    from src.scripts.terminal_utils.terminal_utils import (
+    from src.scripts.terminal_version.terminal_utils.terminal_utils import (
+        set_text_color,
+        print_animation,
         get_input,
         clear_cmd,
         move_cursor_up,
@@ -33,7 +35,7 @@ shortcut_choices = {"r": "rock", "p": "paper", "s": "scissors"}
 
 # Get the absolute path to the welcome.txt file
 script_dir = os.path.dirname(os.path.abspath(__file__))
-welcome_file_path = os.path.join(script_dir, "..", "..", "assets", "text", "welcome.txt")
+welcome_file_path = os.path.join(script_dir, "..", "..", "..", "assets", "text", "welcome.txt")
 
 
 def start_terminal_game():
