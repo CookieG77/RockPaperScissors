@@ -1,6 +1,4 @@
-import sys
-sys.path.insert(0, '/src/scripts')
-from game.py import *
+from src.scripts import game
 
 if __name__ == "__main__":
     print("Hello, World!")
