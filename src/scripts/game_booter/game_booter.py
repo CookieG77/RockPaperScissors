@@ -1,7 +1,8 @@
 """Bootstraps the Rock-Paper-Scissors game by starting the desired version (terminal or GUI)."""
 
-from src.scripts.game import start_terminal_game
-from src.scripts.terminal_utils import get_input, clear_cmd, loading_animation
+from src.scripts.terminal_game.terminal_game import start_terminal_game
+from src.scripts.gui_game.gui_game import start_gui_game
+from src.scripts.terminal_utils.terminal_utils import get_input, clear_cmd, loading_animation
 
 
 def start_game():
@@ -20,7 +21,7 @@ def start_game():
                 break
             if user_input == "gui" or user_input == "g":
                 loading_animation(2, 0.25, "Starting GUI version ")
-                # TODO : Implement GUI version here
+                start_gui_game()
                 break
             print("Invalid input. Please enter 'terminal' or 'gui'.")
         elif user_input == "quit" or user_input == "q":
