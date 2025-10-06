@@ -1,11 +1,13 @@
 """Module for the Rock-Paper-Scissors GUI game logic."""
 
 import pygame
+import random
 try:
     # normal import (package context)
     from ..gui_utils.gui_utils import _constrain_to_aspect
     from ..game_state_manager.game_state_manager import StateManager
     from ..menus.main_menu.main_menu import MainMenu
+    from ..gpu_graphics.gpu_graphics import GPUBackground
 except ImportError:
     # fallback for direct execution (not for production use)
     import sys
@@ -16,6 +18,7 @@ except ImportError:
     from src.scripts.gui_version.gui_utils.gui_utils import _constrain_to_aspect
     from src.scripts.gui_version.game_state_manager.game_state_manager import StateManager
     from src.scripts.gui_version.menus.main_menu.main_menu import MainMenu
+    from src.scripts.gui_version.gpu_graphics.gpu_graphics import GPUBackground
 
 # Define global constants
 global SCREEN_H, SCREEN_W
@@ -47,14 +50,22 @@ def start_gui_game():
         fragment_src = f.read()
 
     w, h = screen.get_size()
+    # choose a random saturated theme for the shared background
+    color_themes = [
+        ((1.0, 0.41, 0.38, 1.0), (0.39, 0.58, 0.93, 1.0), (1.0, 1.0, 0.0, 1.0)),
+        ((0.13, 0.55, 0.13, 1.0), (0.0, 0.5, 0.5, 1.0), (0.27, 0.51, 0.71, 1.0)),
+        ((1.0, 0.65, 0.0, 1.0), (1.0, 0.27, 0.0, 1.0), (1.0, 0.75, 0.8, 1.0)),
+        ((0.54, 0.17, 0.89, 1.0), (0.0, 0.5, 0.0, 1.0), (0.94, 0.97, 1.0, 1.0)),
+        ((0.68, 0.85, 0.9, 1.0), (1.0, 0.87, 0.83, 1.0), (0.74, 0.99, 0.79, 1.0))
+    ]
+    chosen_color_theme = random.choice(color_themes)
     uniforms = {
-        'colour_1': (0.6, 0.0, 1.0, 1.0),
-        'colour_2': (0.0, 1.0, 1.0, 1.0),
-        'colour_3': (1.0, 1.0, 0.0, 1.0),
+        'colour_1': chosen_color_theme[0],
+        'colour_2': chosen_color_theme[1],
+        'colour_3': chosen_color_theme[2],
     }
     shared_bg = None
     try:
-        from src.scripts.gui_version.gpu_graphics.gpu_graphics import GPUBackground
         shared_bg = GPUBackground(w, h, vertex_src, fragment_src, uniforms)
     except Exception:
         shared_bg = None

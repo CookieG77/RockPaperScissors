@@ -24,46 +24,7 @@ class MainMenu(PyGameMenu):
         self.selected_index = 0
 
         # Set up background (use shared bg if provided)
-        w, h = screen.get_size()
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        vertex_src_path = os.path.join(script_dir, "..", "..", "..", "..", "assets", "shaders", "main_menu_background.vert")
-        fragment_src_path = os.path.join(script_dir, "..", "..", "..", "..", "assets", "shaders", "main_menu_background.frag")
-        with open(vertex_src_path, 'r', encoding='utf-8') as f:
-            vertex_src = f.read()
-        with open(fragment_src_path, 'r', encoding='utf-8') as f:
-            fragment_src = f.read()
-
-        # Saturated palette to choose from for the background
-        main_colors = [
-            (1.0, 0.0, 0.0, 1.0),    # red
-            (0.0, 1.0, 0.0, 1.0),    # green
-            (0.0, 0.0, 1.0, 1.0),    # blue
-            (0.5, 0.0, 0.5, 1.0),    # purple
-            (1.0, 0.5, 0.0, 1.0),    # orange
-            (0.6, 0.0, 1.0, 1.0),    # violet / magenta variant
-            (0.0, 1.0, 1.0, 1.0),    # cyan
-            (1.0, 1.0, 0.0, 1.0),    # yellow
-        ]
-
-        # Pass three main colours to the shader (shader expects vec4)
-        # Choose three distinct colours from the palette
-        if len(main_colors) >= 3:
-            c1, c2, c3 = random.sample(main_colors, 3)
-        else:
-            # fallback: repeat as needed
-            picks = (main_colors * 3)[:3]
-            c1, c2, c3 = picks
-
-        uniforms = {
-            'colour_1': c1,
-            'colour_2': c2,
-            'colour_3': c3,
-        }
-        if bg is None:
-            self.bg = GPUBackground(w, h, vertex_src, fragment_src, uniforms)
-        else:
-            # reuse shared background passed from the application
-            self.bg = bg
+        self.bg = bg
 
         # Now that the background and screen are available, set button factories
         # The 'Start Game' entry produces a ChoseGameModeMenu instance when invoked
@@ -85,11 +46,11 @@ class MainMenu(PyGameMenu):
 
         for e in event:
             if e.type == pygame.KEYDOWN:
-                if e.key == pygame.K_UP:
+                if e.key == pygame.K_UP or e.key == pygame.K_z:
                     self.selected_index = (self.selected_index - 1) % len(self.buttons)
-                elif e.key == pygame.K_DOWN:
+                elif e.key == pygame.K_DOWN or e.key == pygame.K_s or e.key == pygame.K_TAB:
                     self.selected_index = (self.selected_index + 1) % len(self.buttons)
-                elif e.key == pygame.K_RETURN:
+                elif e.key == pygame.K_RETURN or e.key == pygame.K_SPACE:
                     _, target = self.buttons[self.selected_index]
                     if target:
                         self.manager.change(target)

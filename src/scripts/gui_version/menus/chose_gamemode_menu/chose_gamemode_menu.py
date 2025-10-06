@@ -38,11 +38,11 @@ class ChoseGameModeMenu(PyGameMenu):
 
         for e in event:
             if e.type == pygame.KEYDOWN:
-                if e.key == pygame.K_UP:
+                if e.key == pygame.K_UP or e.key == pygame.K_z:
                     self.selected_index = (self.selected_index - 1) % len(self.buttons)
-                elif e.key == pygame.K_DOWN:
+                elif e.key == pygame.K_DOWN or e.key == pygame.K_s or e.key == pygame.K_TAB:
                     self.selected_index = (self.selected_index + 1) % len(self.buttons)
-                elif e.key == pygame.K_RETURN:
+                elif e.key == pygame.K_RETURN or e.key == pygame.K_SPACE:
                     _, target = self.buttons[self.selected_index]
                     if target:
                         # target is expected to be a factory that creates a new state
