@@ -1,9 +1,13 @@
 """Module for the Rock-Paper-Scissors terminal game logic."""
 
 import random
+import os
 
 choices = ['rock', 'paper', 'scissors']
 
+# Get the absolute path to the welcome.txt file
+script_dir = os.path.dirname(os.path.abspath(__file__))
+welcome_file_path = os.path.join(script_dir, '..', 'assets', 'text', 'welcome.txt')
 def start_terminal_game():
     """
     Description:
@@ -43,6 +47,13 @@ def start_terminal_game():
     Note: The game is case-insensitive and ignores leading/trailing whitespace.
     But it does not account for typos or alternative spellings.
     """
+    # Read and display the welcome message
+    try:
+        with open(welcome_file_path, 'r', encoding='utf-8') as f:
+            print(f.read())
+    except:
+        print("Welcome to Rock-Paper-Scissors!")  # Fallback message
+    
     while True:
         computer_choice = random.choice(choices)
         player_choice = input('Choose rock, paper, or scissors:').lower().strip()
