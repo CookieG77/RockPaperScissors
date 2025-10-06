@@ -3,7 +3,7 @@
 import random
 import os
 
-from src.scripts.terminal_utils import loading_animation, set_text_color
+from src.scripts.terminal_utils import set_text_color, print_animation, LOADING_STYLE2
 
 try:
     # normal import (package context)
@@ -116,26 +116,30 @@ def start_terminal_game():
             continue
         if (choices.index(first_player_choice) - choices.index(second_player_choice)) % 3 == 1:
             if playing_against_machine:
-                print(loading_animation(
-                    duration = 5,
-                    prefix = f"{set_text_color(94, 'You win!')} (Restarting in 5 seconds",
-                    suffix = ")"))
+                # print(loading_animation(
+                #     duration = 5,
+                #     prefix = f"{set_text_color(94, 'You win!')} (Restarting in 5 seconds",
+                #     suffix = ")"))
+                print_animation(f"{set_text_color(94, 'You win!')} (Restarting in 5 seconds {{}})", 5, animation_frames=LOADING_STYLE2)
             else:
-                print(loading_animation(
-                    duration = 5,
-                    prefix = f"{set_text_color(94, 'First player wins!')} (Restarting in 5 seconds",
-                    suffix = ")"))
+                # print(loading_animation(
+                #     duration = 5,
+                #     prefix = f"{set_text_color(94, 'First player wins!')} (Restarting in 5 seconds",
+                #     suffix = ")"))
+                print_animation(f"{set_text_color(94, 'First player wins!')} (Restarting in 5 seconds {{}})", 5, animation_frames=LOADING_STYLE2)
         else:
             if playing_against_machine:
-                print(loading_animation(
-                    duration = 5,
-                    prefix = f"{set_text_color(91, 'Computer wins!')} (Restarting in 5 seconds",
-                    suffix = ")"))
+                # print(loading_animation(
+                #     duration = 5,
+                #     prefix = f"{set_text_color(91, 'Computer wins!')} (Restarting in 5 seconds",
+                #     suffix = ")"))
+                print_animation(f"{set_text_color(91, 'Computer wins!')} (Restarting in 5 seconds {{}})", 5, animation_frames=LOADING_STYLE2)
             else:
-                print(loading_animation(
-                    duration = 5,
-                    prefix = f"{set_text_color(91, 'Second player wins!')} (Restarting in 5 seconds",
-                    suffix = ")"))
+                # print(loading_animation(
+                #     duration = 5,
+                #     prefix = f"{set_text_color(91, 'Second player wins!')} (Restarting in 5 seconds",
+                #     suffix = ")"))
+                print_animation(f"{set_text_color(91, 'Second player wins!')} (Restarting in 5 seconds {{}})", 5, animation_frames=LOADING_STYLE2)
         clear_cmd()
         print("Type 'stop' to end the game at any time.\n")
 

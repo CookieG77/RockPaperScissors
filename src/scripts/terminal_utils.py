@@ -1,7 +1,10 @@
 """Module for terminal utilities."""
 
 import os
-from time import time
+from time import time, sleep
+import itertools
+import threading
+import sys
 
 LOADING_STYLE1 = [".  ", ".. ", "..."]
 LOADING_STYLE2 = ["|", "/", "-", "\\"]
@@ -50,30 +53,133 @@ def clear_previous_line(lines: int = 1):
     move_cursor_up(lines)
     clear_line()
 
-def loading_animation(
-    duration: int = 2,
-    interval: float = 0.25,
-    prefix: str = "Loading",
-    suffix: str = "",
-    animation_frames: list[str] = LOADING_STYLE1
-    ):
-    """
-    Displays a simple loading animation for the specified duration.
+# def loading_animation(
+#     duration: int = 2,
+#     interval: float = 0.25,
+#     prefix: str = "Loading",
+#     suffix: str = "",
+#     animation_frames: list[str] = LOADING_STYLE1
+#     ):
+#     """
+#     Displays a simple loading animation for the specified duration.
     
-    Args:
-        duration (int): Total duration of the animation in seconds.
-        interval (float): Time between frame updates in seconds.
-        prefix (str): String to display before the animation frames.
-        suffix (str): String to display after the animation frames.
-        animation_frames (list[str]): List of strings representing animation frames.
-    """
-    start_time = time.time()
-    i = 0
-    while time.time() - start_time < duration:
-        print(f"{prefix}{animation_frames[i]}{suffix}", end="\r")
-        i = (i + 1) % len(animation_frames)
-        time.sleep(interval)
-    clear_line()
+#     Args:
+#         duration (int): Total duration of the animation in seconds.
+#         interval (float): Time between frame updates in seconds.
+#         prefix (str): String to display before the animation frames.
+#         suffix (str): String to display after the animation frames.
+#         animation_frames (list[str]): List of strings representing animation frames.
+#     """
+#     start_time = time.time()
+#     i = 0
+#     while time.time() - start_time < duration:
+#         print(f"{prefix}{animation_frames[i]}{suffix}", end="\r")
+#         i = (i + 1) % len(animation_frames)
+#         time.sleep(interval)
+#     clear_line()
+
 def set_text_color(color_code: int, string: str = "") -> str:
     """Sets the terminal text color using ANSI escape codes."""
     return f"\033[{color_code}m{string}\033[0m"
+
+class LoadingAnimation:
+    """
+    Class to handle loading animations in the terminal.
+    
+    Args:
+        frames (list[str]): List of strings representing animation frames.
+        delay (float): Time between frame updates in seconds.
+    """
+    def __init__(self, frames, delay=0.1):
+        self.frames = itertools.cycle(frames)
+        self.delay = delay
+        self.running = False
+        self.current_frame = next(self.frames)
+        self.thread = None
+
+    def _animate(self):
+        while self.running:
+            self.current_frame = next(self.frames)
+            sleep(self.delay)
+
+    def start(self):
+        """
+        Starts the loading animation in a separate thread.
+
+        Returns:
+            LoadingAnimation: The instance of the loading animation.
+        """
+        if not self.running:
+            self.running = True
+            self.thread = threading.Thread(target=self._animate)
+            self.thread.start()
+        return self
+
+    def stop(self):
+        """
+        Stops the loading animation and waits for the thread to finish.
+        Returns:
+            LoadingAnimation: The instance of the loading animation.
+        """
+        if self.running:
+            self.running = False
+            self.thread.join(timeout = 0.1)
+        return self
+
+    def __str__(self):
+        return self.current_frame
+
+class DotsAnimation(LoadingAnimation):
+    """Dot animation using LoadingAnimation class."""
+    def __init__(self, delay=0.25):
+        super().__init__(LOADING_STYLE1, delay)
+
+class SpinnerAnimation(LoadingAnimation):
+    """Spinner animation using LoadingAnimation class."""
+    def __init__(self, delay=0.1):
+        super().__init__(LOADING_STYLE2, delay)
+
+def run_animation(animation_class, duration, *args, **kwargs):
+    """
+    Runs a loading animation for a specified duration.
+    Args:
+        animation_class: The class of the animation to run (e.g., DotAnimation).
+        duration (int): Duration to run the animation in seconds.
+        *args, **kwargs: Arguments to pass to the animation class constructor.
+    """
+    anim = animation_class(*args, **kwargs).start()
+
+    def auto_stop():
+        sleep(duration)
+        anim.stop()
+
+    threading.Thread(target=auto_stop).start()
+
+    return anim
+
+def print_animation(template: str, duration, update_interval=0.1, animation_frames=None):
+    """
+    Print a terminal animation using a provided f-string template for a certain duration.        
+    Args:
+        template (str): Template string with a placeholder {} for the animation frame.
+        duration (int): Duration to run the animation in seconds.
+        update_interval (float): Time between frame updates in seconds.
+        animation_frames (list[str]): List of animation frames to cycle through.
+    """
+    if animation_frames is None:
+        animation_frames = LOADING_STYLE1
+
+    start_time = time()
+    frame_cycle = itertools.cycle(animation_frames)
+
+    while time() - start_time < duration:
+        current_frame = next(frame_cycle)
+        # Use format() to replace {} placeholder with the current frame
+        output = template.format(current_frame)
+        sys.stdout.write(f"\r{output}")
+        sys.stdout.flush()
+        sleep(update_interval)
+
+    # Clear the line and print newline when done
+    sys.stdout.write("\r" + " " * len(template.format("...")) + "\r")
+    sys.stdout.flush()
