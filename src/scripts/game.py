@@ -3,6 +3,7 @@
 import random
 import os
 from .terminal_utils import get_input, clear_cmd
+from time import sleep
 
 choices = ['rock', 'paper', 'scissors']
 
@@ -66,9 +67,14 @@ def start_terminal_game():
             player_choice = get_input('Invalid choice. Please try again.')
             continue
         print(f'Computer chose {computer_choice}.')
+        
         if player_choice == computer_choice:
             print('It\'s a tie!')
-        elif (player_choice == 'rock' and computer_choice == 'scissors') or (player_choice == 'paper' and computer_choice == 'rock') or (player_choice == 'scissors' and computer_choice == 'paper'):
+            continue
+        if (player_choice == 'rock' and computer_choice == 'scissors') or (player_choice == 'paper' and computer_choice == 'rock') or (player_choice == 'scissors' and computer_choice == 'paper'):
             print('You win!')
         else:
             print('Computer wins!')
+        sleep(1)
+        clear_cmd()
+        
