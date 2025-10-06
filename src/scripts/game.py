@@ -2,8 +2,19 @@
 
 import random
 import os
-from .terminal_utils import get_input, clear_cmd
 from time import sleep
+
+try:
+    # normal import (package context)
+    from .terminal_utils import get_input, clear_cmd, move_cursor_up, clear_previous_line
+except ImportError:
+    # fallback for direct execution (not for production use)
+    import sys
+    import pathlib
+    repo_root = pathlib.Path(__file__).resolve().parents[2]  # go up to the project root
+    sys.path.insert(0, str(repo_root))
+    from src.scripts.terminal_utils import get_input, clear_cmd, move_cursor_up, clear_previous_line
+
 
 choices = ['rock', 'paper', 'scissors']
 
@@ -49,6 +60,8 @@ def start_terminal_game():
     Note: The game is case-insensitive and ignores leading/trailing whitespace.
     But it does not account for typos or alternative spellings.
     """
+    playing_against_machine : bool = False
+
     # Read and display the welcome message
     clear_cmd()
     try:
@@ -57,24 +70,63 @@ def start_terminal_game():
     except OSError:
         print("Welcome to Rock-Paper-Scissors!")  # Fallback message
 
+    while True:
+        player_input = get_input(
+            "Do you want to play against the computer or another player? (machine/player): "
+        )
+        if player_input == "machine":
+            playing_against_machine = True
+            break
+        if player_input == "player":
+            playing_against_machine = False
+            break
+        print("Invalid input. Please enter 'machine' or 'player'.")
+    clear_cmd()
+
+    # Start the game loop
     print("Type 'stop' to end the game at any time.\n")
     while True:
-        computer_choice = random.choice(choices)
-        player_choice = get_input('Choose rock, paper, or scissors:')
-        if player_choice == 'stop':
+        first_player_choice = get_input('First player: choose rock, paper, or scissors: ')
+        if first_player_choice == 'stop':
             print('Game stopped.\n')
             break
-        if player_choice not in choices:
-            player_choice = get_input('Invalid choice. Please try again.')
-            continue
-        print(f'Computer chose {computer_choice}.')
-        if player_choice == computer_choice:
+        while first_player_choice not in choices:
+            clear_previous_line()
+            first_player_choice = get_input('Invalid choice. Please try again.')
+        move_cursor_up(1)
+        print('First player: choose rock, paper, or scissors: ********')
+        if not playing_against_machine:
+            second_player_choice = get_input('Second player: choose rock, paper, or scissors: ')
+            if second_player_choice == 'stop':
+                print('Game stopped.\n')
+                break
+            while second_player_choice not in choices:
+                clear_previous_line()
+                second_player_choice = get_input('Invalid choice. Please try again.')
+            clear_previous_line(2)
+            print(f"First player: choose rock, paper, or scissors: {first_player_choice}")
+            print(f"Second player: choose rock, paper, or scissors: {second_player_choice}")
+        else:
+            second_player_choice = random.choice(choices)
+        if playing_against_machine:
+            print(f'Computer chose {second_player_choice}.')
+        if first_player_choice == second_player_choice:
             print('It\'s a tie!')
             continue
-        if (choices.index(player_choice) - choices.index(computer_choice)) % 3 == 1:
-            print('You win! (Restarting in 5 seconds...)')
+        if (choices.index(first_player_choice) - choices.index(second_player_choice)) % 3 == 1:
+            if playing_against_machine:
+                print('You win! (Restarting in 5 seconds...)')
+            else:
+                print('First player wins! (Restarting in 5 seconds...)')
         else:
-            print('Computer wins! (Restarting in 5 seconds...)')
+            if playing_against_machine:
+                print('Computer wins! (Restarting in 5 seconds...)')
+            else:
+                print('Second player wins! (Restarting in 5 seconds...)')
         sleep(5)
         clear_cmd()
         print("Type 'stop' to end the game at any time.\n")
+
+
+if __name__ == "__main__":
+    start_terminal_game()
