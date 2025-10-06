@@ -1,11 +1,12 @@
 """Module for the Rock-Paper-Scissors terminal game logic."""
 
 import random
+from .terminal_utils import get_input, clear_cmd
 
 choices = ['rock', 'paper', 'scissors']
 
 def start_terminal_game():
-    """
+    """>
     Description:
     Starts a terminal version of the Rock-Paper-Scissors game.
     The game continues until the player types 'stop'.
@@ -43,14 +44,16 @@ def start_terminal_game():
     Note: The game is case-insensitive and ignores leading/trailing whitespace.
     But it does not account for typos or alternative spellings.
     """
+    clear_cmd()
+    print("Welcome to Rock-Paper-Scissors! Type 'stop' to end the game.")
     while True:
         computer_choice = random.choice(choices)
-        player_choice = input('Choose rock, paper, or scissors:').lower().strip()
+        player_choice = get_input('Choose rock, paper, or scissors:')
         if player_choice == 'stop':
             print('Game stopped.')
             break
         elif player_choice not in choices:
-            player_choice = input('Invalid choice. Please try again.').lower().strip()
+            player_choice = get_input('Invalid choice. Please try again:')
         elif player_choice == computer_choice:
             print('It\'s a tie!')
         elif (player_choice == 'rock' and computer_choice == 'scissors') or (player_choice == 'paper' and computer_choice == 'rock') or (player_choice == 'scissors' and computer_choice == 'paper'):
