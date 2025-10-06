@@ -20,7 +20,8 @@ def move_cursor_up(lines: int = 1):
 
 
 def clear_line():
-    """Clears the current line in the terminal.
+    """
+    Clears the current line in the terminal.
 
     Uses ANSI escape sequence to clear the line and carriage return to go to
     the beginning of the line. If the terminal doesn't support ANSI, the
@@ -36,7 +37,8 @@ def clear_line():
 
 
 def clear_previous_line(lines: int = 1):
-    """Move up `lines` lines and clear them.
+    """
+    Move up `lines` lines and clear them.
 
     Useful when you just printed something and want to remove it before
     printing a shorter/longer string, avoiding leftover characters.
