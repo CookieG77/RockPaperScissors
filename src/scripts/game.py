@@ -54,9 +54,10 @@ def start_terminal_game():
     try:
         with open(welcome_file_path, 'r', encoding='utf-8') as f:
             print(f.read())
-    except:
+    except OSError:
         print("Welcome to Rock-Paper-Scissors!")  # Fallback message
-    
+
+    print("Type 'stop' to end the game at any time.\n")
     while True:
         computer_choice = random.choice(choices)
         player_choice = get_input('Choose rock, paper, or scissors:')
@@ -67,14 +68,13 @@ def start_terminal_game():
             player_choice = get_input('Invalid choice. Please try again.')
             continue
         print(f'Computer chose {computer_choice}.')
-        
         if player_choice == computer_choice:
             print('It\'s a tie!')
             continue
-        if (player_choice == 'rock' and computer_choice == 'scissors') or (player_choice == 'paper' and computer_choice == 'rock') or (player_choice == 'scissors' and computer_choice == 'paper'):
-            print('You win!')
+        if (choices.index(player_choice) - choices.index(computer_choice)) % 3 == 1:
+            print('You win! (Restarting in 5 seconds...)')
         else:
-            print('Computer wins!')
-        sleep(1)
+            print('Computer wins! (Restarting in 5 seconds...)')
+        sleep(5)
         clear_cmd()
-        
+        print("Type 'stop' to end the game at any time.\n")

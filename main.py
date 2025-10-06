@@ -2,9 +2,11 @@
 
 from time import sleep
 from src.scripts.game import start_terminal_game
-from src.scripts.terminal_utils import get_input
+from src.scripts.terminal_utils import get_input, clear_cmd
 
 if __name__ == "__main__":
+    clear_cmd()
+    print("Welcome to Rock-Paper-Scissors!\n")
     while True:
         playerInput = get_input("What do you want to do ? (play/quit): ")
         if playerInput == "play":
