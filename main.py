@@ -1,13 +1,19 @@
-from src.scripts import game
+"""Starts the Rock-Paper-Scissors game in terminal or GUI mode based on user input."""
+
+from src.scripts.game import start_terminal_game
+
+def get_input(prompt: str) -> str:
+    """Helper function to get user input."""
+    return input(prompt).strip().lower()
 
 if __name__ == "__main__":
     while True:
-        playerInput = input("What do you want to do ? (play/quit): ").strip().lower()
+        playerInput = get_input("What do you want to do ? (play/quit): ")
         if playerInput == "play":
-            playerInput = input("What version do you want to play (terminal/gui) ? ").strip().lower()
+            playerInput = get_input("What version do you want to play (terminal/gui) ? ")
             if playerInput == "terminal":
                 print("Starting terminal version...")
-                # TODO : Implement terminal version here
+                start_terminal_game()
                 break
             elif playerInput == "gui":
                 # TODO : Implement GUI version here
