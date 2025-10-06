@@ -64,5 +64,20 @@ def loading_animation(
     clear_line()
     
 def set_text_color(color_code: int, string: str = "") -> str:
-    """Sets the terminal text color using ANSI escape codes."""
+    """
+    Sets the terminal text color using ANSI escape codes.
+    
+    Args:
+        color_code (int): The ANSI color code (e.g., 31 for red, 32 for green).
+        string (str): The string to colorize.
+        
+    Returns:
+        str: The colorized string.
+        
+    Example:
+        print(set_text_color(31, "This text is red"))
+        print(set_text_color(32, "This text is green"))
+        print(set_text_color(34, "This text is blue"))
+        print(set_text_color(93, "This text is bright yellow"))
+    """
     return(f"\033[{color_code}m{string}\033[0m")
