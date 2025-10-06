@@ -50,11 +50,13 @@ def start_terminal_game():
         computer_choice = random.choice(choices)
         player_choice = get_input('Choose rock, paper, or scissors:')
         if player_choice == 'stop':
-            print('Game stopped.')
+            print('Game stopped.\n')
             break
-        elif player_choice not in choices:
-            player_choice = get_input('Invalid choice. Please try again:')
-        elif player_choice == computer_choice:
+        if player_choice not in choices:
+            player_choice = get_input('Invalid choice. Please try again.')
+            continue
+        print(f'Computer chose {computer_choice}.')
+        if player_choice == computer_choice:
             print('It\'s a tie!')
         elif (player_choice == 'rock' and computer_choice == 'scissors') or (player_choice == 'paper' and computer_choice == 'rock') or (player_choice == 'scissors' and computer_choice == 'paper'):
             print('You win!')
