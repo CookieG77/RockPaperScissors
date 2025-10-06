@@ -1,6 +1,4 @@
-"""
-Bootstraps the Rock-Paper-Scissors game by starting the desired version (terminal or GUI).
-"""
+"""Bootstraps the Rock-Paper-Scissors game by starting the desired version (terminal or GUI)."""
 
 from time import sleep
 from src.scripts.game import start_terminal_game
