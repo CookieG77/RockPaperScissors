@@ -1,7 +1,7 @@
 """Module for terminal utilities."""
 
 import os
-from time import time
+from time import time, sleep
 
 LOADING_STYLE1 = [".  ", ".. ", "..."]
 LOADING_STYLE2 = ["|", "/", "-", "\\"]
@@ -55,7 +55,7 @@ def loading_animation(
     interval: float = 0.25,
     prefix: str = "Loading",
     suffix: str = "",
-    animation_frames: list[str] = LOADING_STYLE1
+    animation_frames = None
     ):
     """
     Displays a simple loading animation for the specified duration.
@@ -67,12 +67,14 @@ def loading_animation(
         suffix (str): String to display after the animation frames.
         animation_frames (list[str]): List of strings representing animation frames.
     """
-    start_time = time.time()
+    if animation_frames is None:
+        animation_frames = LOADING_STYLE1
+    start_time = time()
     i = 0
-    while time.time() - start_time < duration:
+    while time() - start_time < duration:
         print(f"{prefix}{animation_frames[i]}{suffix}", end="\r")
         i = (i + 1) % len(animation_frames)
-        time.sleep(interval)
+        sleep(interval)
     clear_line()
 def set_text_color(color_code: int, string: str = "") -> str:
     """
