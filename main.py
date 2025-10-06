@@ -15,11 +15,10 @@ if __name__ == "__main__":
                 print("Starting terminal version...")
                 start_terminal_game()
                 break
-            elif playerInput == "gui":
+            if playerInput == "gui":
                 # TODO : Implement GUI version here
                 break
-            else:
-                print("Invalid input. Please enter 'terminal' or 'gui'.")
+            print("Invalid input. Please enter 'terminal' or 'gui'.")
         elif playerInput == "quit":
             break
         else:
