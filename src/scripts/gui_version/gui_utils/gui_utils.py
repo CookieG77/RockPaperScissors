@@ -7,10 +7,18 @@ from src.scripts.gui_version.game_state_manager.game_state_manager import StateM
 class PyGameMenu:
     """Class to handle PyGame menu operations."""
 
-    def __init__(self, manager: StateManager, screen: pygame.Surface):
+    def __init__(self, manager: StateManager, screen: pygame.Surface, bg=None):
+        """Base menu class.
+
+        Parameters:
+        - manager: StateManager that owns this state
+        - screen: pygame display surface
+        - bg: optional shared GPUBackground instance to render behind the UI
+        """
         self.manager = manager
+        self.screen = screen
+        self.bg = bg
         self.t = 0
-        self.has_animated_bg = False
 
     def handle_event(self, event):
         """Handle events."""

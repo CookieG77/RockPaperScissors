@@ -8,23 +8,22 @@ import pygame
 from src.scripts.gui_version.game_state_manager.game_state_manager import StateManager
 from src.scripts.gui_version.gpu_graphics.gpu_graphics import GPUBackground
 from src.scripts.gui_version.gui_utils.gui_utils import PyGameMenu, render_surface_fullscreen
+from src.scripts.gui_version.menus.chose_gamemode_menu.chose_gamemode_menu import ChoseGameModeMenu
 
 
 class MainMenu(PyGameMenu):
     """Class to handle the main menu."""
 
-    def __init__(self, manager: StateManager, screen: pygame.Surface):
-        super().__init__(manager, screen)
+    def __init__(self, manager: StateManager, screen: pygame.Surface, bg=None):
+        super().__init__(manager, screen, bg=bg)
 
-        # Menu options
-        self.buttons = [
-            ("Start Game", None),
-            ("Quit", None)
-        ]
+        # Menu options (will set factories after background is initialized)
+        self.buttons = []
+
+        # Background info
         self.selected_index = 0
-        self.has_animated_bg = True
 
-        # Set up background
+        # Set up background (use shared bg if provided)
         w, h = screen.get_size()
         script_dir = os.path.dirname(os.path.abspath(__file__))
         vertex_src_path = os.path.join(script_dir, "..", "..", "..", "..", "assets", "shaders", "main_menu_background.vert")
@@ -60,8 +59,21 @@ class MainMenu(PyGameMenu):
             'colour_2': c2,
             'colour_3': c3,
         }
-        self.bg = GPUBackground(w, h, vertex_src, fragment_src, uniforms)
+        if bg is None:
+            self.bg = GPUBackground(w, h, vertex_src, fragment_src, uniforms)
+        else:
+            # reuse shared background passed from the application
+            self.bg = bg
 
+        # Now that the background and screen are available, set button factories
+        # The 'Start Game' entry produces a ChoseGameModeMenu instance when invoked
+        # When creating the ChoseGameModeMenu, provide a back_factory that
+        # creates a fresh MainMenu when invoked. This avoids the Chose menu
+        # importing MainMenu directly and breaks circular imports.
+        self.buttons = [
+            ("Start Game", lambda mgr: ChoseGameModeMenu(mgr, screen, self.bg, back_factory=lambda m: MainMenu(m, screen, bg=self.bg))),
+            ("Quit", None)
+        ]
         # font and texture cache for OpenGL-rendered text
         self.font = pygame.font.SysFont("arial", 36)
         # cache: (label, color) -> (texid, w, h)
@@ -70,6 +82,7 @@ class MainMenu(PyGameMenu):
 
     def handle_event(self, event):
         """Handle events specific to the main menu."""
+
         for e in event:
             if e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_UP:
@@ -91,9 +104,6 @@ class MainMenu(PyGameMenu):
         ui_surface = pygame.Surface(screen.get_size(), pygame.SRCALPHA)
         font = pygame.font.SysFont("Arial", 40)
 
-        # Render debug background to test if ui is drawn over it (transparent)
-        # Use alpha=0 so the GL background remains visible under the UI
-        ui_surface.fill((0, 0, 0, 0))
 
         # Render the menu title
         text = font.render("Mon super menu", True, (255, 255, 255))

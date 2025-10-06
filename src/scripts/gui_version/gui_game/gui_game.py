@@ -1,6 +1,6 @@
 """Module for the Rock-Paper-Scissors GUI game logic."""
 
-import pygam
+import pygame
 try:
     # normal import (package context)
     from ..gui_utils.gui_utils import _constrain_to_aspect
@@ -32,9 +32,35 @@ def start_gui_game():
     screen = pygame.display.set_mode((SCREEN_W, SCREEN_H), flags)
     clock = pygame.time.Clock()
 
-    # Create the state manager
-    manager = StateManager(MainMenu(None, screen))
-    manager.state_manager = manager
+    # Create the state manager and initial state
+    manager = StateManager(None)
+
+    # Create a single shared GPUBackground for all menus
+    import pathlib
+    # compute repository root (same logic as fallback imports earlier)
+    repo_root = pathlib.Path(__file__).resolve().parents[4]
+    vertex_src_path = repo_root / 'src' / 'assets' / 'shaders' / 'main_menu_background.vert'
+    fragment_src_path = repo_root / 'src' / 'assets' / 'shaders' / 'main_menu_background.frag'
+    with open(vertex_src_path, 'r', encoding='utf-8') as f:
+        vertex_src = f.read()
+    with open(fragment_src_path, 'r', encoding='utf-8') as f:
+        fragment_src = f.read()
+
+    w, h = screen.get_size()
+    uniforms = {
+        'colour_1': (0.6, 0.0, 1.0, 1.0),
+        'colour_2': (0.0, 1.0, 1.0, 1.0),
+        'colour_3': (1.0, 1.0, 0.0, 1.0),
+    }
+    shared_bg = None
+    try:
+        from src.scripts.gui_version.gpu_graphics.gpu_graphics import GPUBackground
+        shared_bg = GPUBackground(w, h, vertex_src, fragment_src, uniforms)
+    except Exception:
+        shared_bg = None
+
+    main_menu = MainMenu(manager, screen, bg=shared_bg)
+    manager.current_state = main_menu
 
     # Main game loop
     running : bool = True
@@ -48,7 +74,7 @@ def start_gui_game():
                 new_w, new_h = event.w, event.h
                 w, h = _constrain_to_aspect(new_w, new_h, SCREEN_W / SCREEN_H, SCREEN_W, SCREEN_H)
                 screen = pygame.display.set_mode((w, h), flags)
-                manager.state_manager.update_size(w, h)
+                manager.update_size(w, h)
         manager.handle_event(events)
         manager.update(dt)
         manager.draw(screen)
