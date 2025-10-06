@@ -1,8 +1,8 @@
 """Bootstraps the Rock-Paper-Scissors game by starting the desired version (terminal or GUI)."""
 
-from src.scripts.terminal_game.terminal_game import start_terminal_game
-from src.scripts.gui_game.gui_game import start_gui_game
-from src.scripts.terminal_utils.terminal_utils import get_input, clear_cmd, print_animation
+from src.scripts.terminal_version.terminal_game.terminal_game import start_terminal_game
+from src.scripts.gui_version.gui_game.gui_game import start_gui_game
+from src.scripts.terminal_version.terminal_utils.terminal_utils import get_input, clear_cmd, print_animation
 
 
 def start_game():

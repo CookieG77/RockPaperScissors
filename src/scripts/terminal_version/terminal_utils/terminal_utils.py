@@ -1,8 +1,10 @@
 """Module for terminal utilities."""
 
+import itertools
 import os
-from time import time, sleep
-import itertools, sys, threading
+import sys
+import threading
+from time import sleep, time
 
 LOADING_STYLE1 = [".  ", ".. ", "..."]
 LOADING_STYLE2 = ["|", "/", "-", "\\"]
