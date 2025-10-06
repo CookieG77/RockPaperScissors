@@ -4,6 +4,8 @@ import random
 import os
 from time import sleep
 
+from src.scripts.terminal_utils import loading_animation, set_text_color
+
 try:
     # normal import (package context)
     from .terminal_utils import get_input, clear_cmd, move_cursor_up, clear_previous_line
@@ -66,9 +68,9 @@ def start_terminal_game():
     clear_cmd()
     try:
         with open(welcome_file_path, 'r', encoding='utf-8') as f:
-            print(f.read())
+            print(set_text_color(92, f.read()))
     except OSError:
-        print("Welcome to Rock-Paper-Scissors!")  # Fallback message
+        print(set_text_color(92, "Welcome to Rock-Paper-Scissors!"))  # Fallback message
 
     while True:
         player_input = get_input(
@@ -86,44 +88,43 @@ def start_terminal_game():
     # Start the game loop
     print("Type 'stop' to end the game at any time.\n")
     while True:
-        first_player_choice = get_input('First player: choose rock, paper, or scissors: ')
+        first_player_choice = get_input(f"{set_text_color(34, 'First player')}: choose rock, paper, or scissors: ")
         if first_player_choice == 'stop':
             print('Game stopped.\n')
             break
         while first_player_choice not in choices:
             clear_previous_line()
-            first_player_choice = get_input('Invalid choice. Please try again.')
+            first_player_choice = get_input('Invalid choice. Please try again: ')
         move_cursor_up(1)
-        print('First player: choose rock, paper, or scissors: ********')
+        print(f"{set_text_color(34, 'First player')}: choose rock, paper, or scissors: ********")
         if not playing_against_machine:
-            second_player_choice = get_input('Second player: choose rock, paper, or scissors: ')
+            second_player_choice = get_input(f"{set_text_color(31, 'Second player')}: choose rock, paper, or scissors: ")
             if second_player_choice == 'stop':
                 print('Game stopped.\n')
                 break
             while second_player_choice not in choices:
                 clear_previous_line()
-                second_player_choice = get_input('Invalid choice. Please try again.')
+                second_player_choice = get_input('Invalid choice. Please try again: ')
             clear_previous_line(2)
-            print(f"First player: choose rock, paper, or scissors: {first_player_choice}")
-            print(f"Second player: choose rock, paper, or scissors: {second_player_choice}")
+            print(f"{set_text_color(34, 'First player')}: choose rock, paper, or scissors: {first_player_choice}")
+            print(f"{set_text_color(31, 'Second player')}: choose rock, paper, or scissors: {second_player_choice}")
         else:
             second_player_choice = random.choice(choices)
         if playing_against_machine:
-            print(f'Computer chose {second_player_choice}.')
+            print(f'{set_text_color(31, "Computer")} chose {second_player_choice}.')
         if first_player_choice == second_player_choice:
-            print('It\'s a tie!')
+            print(set_text_color(33, 'It\'s a tie!'))
             continue
         if (choices.index(first_player_choice) - choices.index(second_player_choice)) % 3 == 1:
             if playing_against_machine:
-                print('You win! (Restarting in 5 seconds...)')
+                print(loading_animation(duration = 5, loading_str = f"{set_text_color(94, 'You win!')} (Restarting in 5 seconds", suffix = ")"))
             else:
-                print('First player wins! (Restarting in 5 seconds...)')
+                print(loading_animation(duration = 5, loading_str = f"{set_text_color(94, 'First player wins!')} (Restarting in 5 seconds", suffix = ")"))
         else:
             if playing_against_machine:
-                print('Computer wins! (Restarting in 5 seconds...)')
+                print(loading_animation(duration = 5, loading_str = f"{set_text_color(91, 'Computer wins!')} (Restarting in 5 seconds", suffix = ")"))
             else:
-                print('Second player wins! (Restarting in 5 seconds...)')
-        sleep(5)
+                print(loading_animation(duration = 5, loading_str = f"{set_text_color(91, 'Second player wins!')} (Restarting in 5 seconds", suffix = ")"))
         clear_cmd()
         print("Type 'stop' to end the game at any time.\n")
 

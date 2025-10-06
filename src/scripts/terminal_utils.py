@@ -43,3 +43,24 @@ def clear_previous_line(lines: int = 1):
     """
     move_cursor_up(lines)
     clear_line()
+
+def loading_animation(
+    duration: int = 2, 
+    interval: float = 0.25, 
+    loading_str = "Loading", 
+    suffix: str = "", 
+    animation_frames: list = [".  ", ".. ", "..."]
+    ):
+    """Displays a simple loading animation for the specified duration."""
+    import time
+    start_time = time.time()
+    i = 0
+    while time.time() - start_time < duration:
+        print(f"{loading_str}{animation_frames[i]}{suffix}", end="\r")
+        i = (i + 1) % len(animation_frames)
+        time.sleep(interval)
+    clear_line()
+    
+def set_text_color(color_code: int, string: str = "") -> str:
+    """Sets the terminal text color using ANSI escape codes."""
+    return(f"\033[{color_code}m{string}\033[0m")
