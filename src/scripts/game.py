@@ -2,6 +2,7 @@
 
 import random
 import os
+from .terminal_utils import get_input, clear_cmd
 
 choices = ['rock', 'paper', 'scissors']
 
@@ -9,7 +10,7 @@ choices = ['rock', 'paper', 'scissors']
 script_dir = os.path.dirname(os.path.abspath(__file__))
 welcome_file_path = os.path.join(script_dir, '..', 'assets', 'text', 'welcome.txt')
 def start_terminal_game():
-    """
+    """>
     Description:
     Starts a terminal version of the Rock-Paper-Scissors game.
     The game continues until the player types 'stop'.
@@ -48,6 +49,7 @@ def start_terminal_game():
     But it does not account for typos or alternative spellings.
     """
     # Read and display the welcome message
+    clear_cmd()
     try:
         with open(welcome_file_path, 'r', encoding='utf-8') as f:
             print(f.read())
@@ -56,12 +58,12 @@ def start_terminal_game():
     
     while True:
         computer_choice = random.choice(choices)
-        player_choice = input('Choose rock, paper, or scissors:').lower().strip()
+        player_choice = get_input('Choose rock, paper, or scissors:')
         if player_choice == 'stop':
             print('Game stopped.\n')
             break
         if player_choice not in choices:
-            player_choice = input('Invalid choice. Please try again.').lower().strip()
+            player_choice = get_input('Invalid choice. Please try again.')
             continue
         print(f'Computer chose {computer_choice}.')
         if player_choice == computer_choice:
