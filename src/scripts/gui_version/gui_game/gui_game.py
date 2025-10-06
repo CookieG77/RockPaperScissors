@@ -1,10 +1,11 @@
 """Module for the Rock-Paper-Scissors GUI game logic."""
 
-import pygame
+import pygam
 try:
     # normal import (package context)
-    from ..gui_utils.gui_utils import MainMenu
+    from ..gui_utils.gui_utils import _constrain_to_aspect
     from ..game_state_manager.game_state_manager import StateManager
+    from ..menus.main_menu.main_menu import MainMenu
 except ImportError:
     # fallback for direct execution (not for production use)
     import sys
@@ -12,8 +13,9 @@ except ImportError:
 
     repo_root = pathlib.Path(__file__).resolve().parents[4]  # go up to the project root
     sys.path.insert(0, str(repo_root))
-    from src.scripts.gui_version.gui_utils.gui_utils import MainMenu
+    from src.scripts.gui_version.gui_utils.gui_utils import _constrain_to_aspect
     from src.scripts.gui_version.game_state_manager.game_state_manager import StateManager
+    from src.scripts.gui_version.menus.main_menu.main_menu import MainMenu
 
 # Define global constants
 global SCREEN_H, SCREEN_W
@@ -43,8 +45,10 @@ def start_gui_game():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.VIDEORESIZE:
-                screen = pygame.display.set_mode((event.w, event.h), flags)
-                manager.state_manager.update_size(event.w, event.h)
+                new_w, new_h = event.w, event.h
+                w, h = _constrain_to_aspect(new_w, new_h, SCREEN_W / SCREEN_H, SCREEN_W, SCREEN_H)
+                screen = pygame.display.set_mode((w, h), flags)
+                manager.state_manager.update_size(w, h)
         manager.handle_event(events)
         manager.update(dt)
         manager.draw(screen)
@@ -52,5 +56,5 @@ def start_gui_game():
     pygame.quit()
     
 
-if __name__ == "__main__":
+if __name__ == "__main__": # Start the GUI game (for direct execution and debugging)
     start_gui_game()

@@ -2,16 +2,8 @@
 
 import time
 import numpy as np
-from OpenGL.GL import (
-    glUseProgram, glGenVertexArrays, glBindVertexArray, glGenBuffers, glBindBuffer,
-    glBufferData, glGetAttribLocation, glEnableVertexAttribArray, glVertexAttribPointer,
-    glGetUniformLocation, glCreateShader, glShaderSource, glCompileShader, glGetShaderiv,
-    glGetShaderInfoLog, glCreateProgram, glAttachShader, glLinkProgram, glGetProgramiv,
-    glGetProgramInfoLog, glUniform1f, glUniform2f, glClear, glDrawArrays,
-    GL_ARRAY_BUFFER, GL_STATIC_DRAW, GL_VERTEX_SHADER, GL_FRAGMENT_SHADER,
-    GL_COMPILE_STATUS, GL_LINK_STATUS, GL_COLOR_BUFFER_BIT, GL_TRIANGLES,
-    GL_FLOAT, GL_FALSE
-)
+import pygame
+from OpenGL.GL import *
 
 
 class GPUBackground:
@@ -81,7 +73,29 @@ class GPUBackground:
     def render(self):
         """Render the animated background."""
         t = time.time() - self.start_time
+        # ensure the viewport matches the stored size so the shader draws to the whole window
+        try:
+            glViewport(0, 0, int(self.width), int(self.height))
+        except Exception:
+            pass
+        # debug current viewport
+        # try to ensure viewport is what we expect; ignore failures
+        try:
+            vp = glGetIntegerv(GL_VIEWPORT)
+        except Exception:
+            vp = None
+        # Use a neutral clear color (black) in normal runs
+        try:
+            glClearColor(0.0, 0.0, 0.0, 1.0)
+        except Exception:
+            pass
+
         glUseProgram(self.program)
+        # debug current program id
+        try:
+            curp = glGetIntegerv(GL_CURRENT_PROGRAM)
+        except Exception:
+            curp = None
         glUniform1f(self.i_time_loc, t)
         glUniform2f(self.i_resolution_loc, self.width, self.height)
 
@@ -96,75 +110,86 @@ class GPUBackground:
                 print(f"Failed to upload uniform {name}: {e}")
 
         glClear(GL_COLOR_BUFFER_BIT)
+        # ensure our fullscreen quad VAO is bound so the shader has vertex data
+        try:
+            glBindVertexArray(self.vao)
+        except Exception:
+            pass
         glDrawArrays(GL_TRIANGLES, 0, 6)
+        try:
+            glBindVertexArray(0)
+        except Exception:
+            pass
+        # check for GL errors after draw
+        try:
+            err = glGetError()
+            # silently ignore GL errors in normal runs; leave checks for developer diagnostics
+        except Exception:
+            pass
 
     def update_size(self, width, height):
         """Update the resolution uniform when the window is resized."""
         self.width = width
         self.height = height
-        self.render()
+        # update the GL viewport immediately to match new size
+        try:
+            glViewport(0, 0, int(self.width), int(self.height))
+        except Exception:
+            pass
 
     def _upload_uniform(self, loc, value):
         """Upload a Python value to a uniform location.
 
         Supported types: int, float, bool, tuple/list/numpy array (size 1..4)
         """
-        import numpy as _np
-
+        # booleans -> ints
         if isinstance(value, bool):
-            from OpenGL.GL import glUniform1i
             glUniform1i(loc, int(value))
             return
 
+        # ints
         if isinstance(value, int):
-            from OpenGL.GL import glUniform1i
             glUniform1i(loc, int(value))
             return
 
+        # floats
         if isinstance(value, float):
-            from OpenGL.GL import glUniform1f
             glUniform1f(loc, float(value))
             return
 
-        # sequence or numpy array
-        if isinstance(value, (list, tuple)) or (_np and isinstance(value, _np.ndarray)):
-            arr = _np.array(value)
+        # sequences / numpy arrays
+        if isinstance(value, (list, tuple)) or (np and isinstance(value, np.ndarray)):
+            arr = np.array(value)
             # integer arrays
             if arr.dtype.kind in ("i", "u"):
                 if arr.size == 1:
-                    from OpenGL.GL import glUniform1i
                     glUniform1i(loc, int(arr.flat[0]))
                 elif arr.size == 2:
-                    from OpenGL.GL import glUniform2i
                     glUniform2i(loc, int(arr.flat[0]), int(arr.flat[1]))
                 elif arr.size == 3:
-                    from OpenGL.GL import glUniform3i
                     glUniform3i(loc, int(arr.flat[0]), int(arr.flat[1]), int(arr.flat[2]))
                 elif arr.size == 4:
-                    from OpenGL.GL import glUniform4i
                     glUniform4i(loc, int(arr.flat[0]), int(arr.flat[1]), int(arr.flat[2]), int(arr.flat[3]))
                 else:
                     raise ValueError("Integer uniform arrays >4 not supported")
                 return
 
             # float arrays
-            if arr.dtype.kind == "f" or arr.dtype.kind == "c" or arr.dtype.kind == "u":
+            if arr.dtype.kind in ("f", "c", "u"):
                 if arr.size == 1:
-                    from OpenGL.GL import glUniform1f
                     glUniform1f(loc, float(arr.flat[0]))
                 elif arr.size == 2:
-                    from OpenGL.GL import glUniform2f
                     glUniform2f(loc, float(arr.flat[0]), float(arr.flat[1]))
                 elif arr.size == 3:
-                    from OpenGL.GL import glUniform3f
                     glUniform3f(loc, float(arr.flat[0]), float(arr.flat[1]), float(arr.flat[2]))
                 elif arr.size == 4:
-                    from OpenGL.GL import glUniform4f
                     glUniform4f(loc, float(arr.flat[0]), float(arr.flat[1]), float(arr.flat[2]), float(arr.flat[3]))
                 else:
                     # try bulk upload as 1fv
-                    from OpenGL.GL import glUniform1fv
-                    glUniform1fv(loc, arr.astype(_np.float32))
+                    try:
+                        glUniform1fv(loc, arr.astype(np.float32))
+                    except Exception:
+                        raise ValueError("Float uniform arrays >4 not supported by helper")
                 return
 
         raise TypeError(f"Unsupported uniform type for value: {type(value)}")
