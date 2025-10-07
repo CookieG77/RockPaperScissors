@@ -6,6 +6,7 @@ import pygame
 from src.scripts.gui_version.game_state_manager.game_state_manager import StateManager
 from src.scripts.gui_version.gpu_graphics.gpu_graphics import GPUBackground
 from src.scripts.gui_version.gui_utils.gui_utils import PyGameMenu, render_surface_fullscreen
+from src.scripts.gui_version.menus.game_menu.game_menu import GameMenu
 from typing import Callable, Optional
 
 
@@ -13,17 +14,14 @@ class ChoseGameModeMenu(PyGameMenu):
     """Class to handle the game mode selection menu."""
 
     def __init__(self, manager: StateManager, screen: pygame.Surface, bg: GPUBackground, back_factory: Optional[Callable] = None):
-        """Initialize. back_factory is a callable that accepts a StateManager and returns a new State.
-
-        This avoids importing MainMenu here and breaks the circular import.
-        """
-        super().__init__(manager, screen, bg=bg)
+        """Initializes the game mode selection menu."""
+        super().__init__(manager, screen, bg)
 
         # Menu options. The back target is provided by the caller via back_factory.
         back_target = back_factory if back_factory is not None else None
         self.buttons = [
-            ("VS Computer", None),
-            ("VS Player", None),
+            ("VS Computer", lambda mgr: GameMenu(mgr, screen, self.bg, back_factory=back_target)),
+            ("VS Player", lambda mgr: GameMenu(mgr, screen, self.bg, False, back_target)),
             ("Back to Main Menu", back_target),
         ]
         self.selected_index = 0
@@ -72,8 +70,3 @@ class ChoseGameModeMenu(PyGameMenu):
         
         # Render the UI surface to the screen
         render_surface_fullscreen(ui_surface)
-
-
-    def update_size(self, width: int, height: int):
-        """Update the size of the background."""
-        self.bg.update_size(width, height)
