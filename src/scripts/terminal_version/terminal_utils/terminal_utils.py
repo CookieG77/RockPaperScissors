@@ -53,33 +53,6 @@ def clear_previous_line(lines: int = 1):
     move_cursor_up(lines)
     clear_line()
 
-# def loading_animation(
-#     duration: int = 2,
-#     interval: float = 0.25,
-#     prefix: str = "Loading",
-#     suffix: str = "",
-#     animation_frames = None
-#     ):
-#     """
-#     Displays a simple loading animation for the specified duration.
-    
-#     Args:
-#         duration (int): Total duration of the animation in seconds.
-#         interval (float): Time between frame updates in seconds.
-#         prefix (str): String to display before the animation frames.
-#         suffix (str): String to display after the animation frames.
-#         animation_frames (list[str]): List of strings representing animation frames.
-#     """
-#     if animation_frames is None:
-#         animation_frames = LOADING_STYLE1
-#     start_time = time()
-#     i = 0
-#     while time() - start_time < duration:
-#         print(f"{prefix}{animation_frames[i]}{suffix}", end="\r")
-#         i = (i + 1) % len(animation_frames)
-#         sleep(interval)
-#     clear_line()
-
 def set_text_color(color_code: int, string: str = "") -> str:
     """
     Sets the terminal text color using ANSI escape codes.
@@ -155,25 +128,6 @@ class SpinnerAnimation(LoadingAnimation):
     """Spinner animation using LoadingAnimation class."""
     def __init__(self, delay=0.1):
         super().__init__(LOADING_STYLE2, delay)
-
-# TODO: Set thread_animation correctly to run animations in a thread to not encumber main thread
-def thread_animation(animation_class, duration, *args, **kwargs):
-    """
-    Runs a loading animation for a specified duration.
-    Args:
-        animation_class: The class of the animation to run (e.g., DotAnimation).
-        duration (int): Duration to run the animation in seconds.
-        *args, **kwargs: Arguments to pass to the animation class constructor.
-    """
-    anim = animation_class(*args, **kwargs).start()
-
-    def auto_stop():
-        sleep(duration)
-        anim.stop()
-
-    threading.Thread(target=auto_stop).start()
-
-    return anim
 
 def print_animation(template: str, duration, update_interval=0.2, animation_frames=None):
     """
