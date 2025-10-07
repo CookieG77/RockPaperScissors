@@ -71,7 +71,7 @@ class GameMenu(PyGameMenu):
         self.player2_menu_index = 0
         self.player2_menu_choice = None
 
-        self.player_scores = [0, 2]  # [player1_score, player2_score]
+        self.player_scores = [0, 0]  # [player1_score, player2_score]
 
         self.game_stage = 0  # 0: ongoing, 1: player1 chosed, 2: player2 chosed, 3: in animation, 4: game over
 
@@ -178,7 +178,6 @@ class GameMenu(PyGameMenu):
                 if e.key == pygame.K_ESCAPE:
                     # Toggle pause menu
                     self.is_paused = not self.is_paused
-                    print("Pause toggled:", self.is_paused)
                 if self.is_paused:
                     # Handle pause menu input
                     if e.key == pygame.K_UP or e.key == pygame.K_z:
@@ -225,13 +224,11 @@ class GameMenu(PyGameMenu):
                                     self.player1_menu_index
                                 ]
                                 self.player1_menu_choice = choice
-                                print("Player 1 chose:", choice)
                                 self.game_stage = 1
                                 if self.is_against_machine:
                                     self.player2_menu_choice = random.choice(
                                         [btn[1] for btn in self.player2_menu_buttons]
                                     )
-                                    print("Machine chose:", self.player2_menu_choice)
                                     self.game_stage = 2
                         elif (
                             self.game_stage == 1
@@ -256,7 +253,6 @@ class GameMenu(PyGameMenu):
                                     self.player2_menu_index
                                 ]
                                 self.player2_menu_choice = choice
-                                print("Player 2 chose:", choice)
                                 self.game_stage = 2
                     elif (
                         self.game_stage == 4
@@ -726,4 +722,3 @@ class GameMenu(PyGameMenu):
             self.player_scores[0] += 1
         elif winner == 2:
             self.player_scores[1] += 1
-        print("Scores updated:", self.player_scores)
