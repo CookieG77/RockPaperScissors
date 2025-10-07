@@ -63,6 +63,8 @@ class GameMenu(PyGameMenu):
         ]
         self.player2_menu_index = 0
         self.player2_menu_choice = None
+        
+        self.player_scores = [0, 0]  # [player1_score, player2_score]
 
         self.game_stage = 0 # 0: ongoing, 1: player1 chosed, 2: player2 chosed, 3: in animation, 4: game over
 
@@ -174,7 +176,7 @@ class GameMenu(PyGameMenu):
                                 self.player2_menu_choice = choice
                                 print("Player 2 chose:", choice)
                                 self.game_stage = 2
-                    elif self.game_stage == 4 and self.get_winner() > 0:
+                    elif self.game_stage == 4 and self.get_winner() > 0 and self.is_game_over():
                         # Game is over, wait for any key to restart
                         if e.key == pygame.K_RETURN or e.key == pygame.K_SPACE:
                             # Redirect to a new game menu instance
@@ -200,6 +202,21 @@ class GameMenu(PyGameMenu):
                 self.animation_start_time = pygame.time.get_ticks()
             elapsed = pygame.time.get_ticks() - self.animation_start_time
             if elapsed >= 5000:
+                # Restart the game
+                self.game_stage = 0
+                self.player1_menu_choice = None
+                self.player2_menu_choice = None
+                self.player1_menu_index = 0
+                self.player2_menu_index = 0
+                self.animate_hand_idle = True
+                self.animation_start_time = None
+                self.animation_stage = 0
+        elif self.game_stage == 4 and not self.is_game_over():
+            # Game is over but no player has reached 3 wins yet, wait for 2 seconds and restart the game
+            if self.animation_start_time is None:
+                self.animation_start_time = pygame.time.get_ticks()
+            elapsed = pygame.time.get_ticks() - self.animation_start_time
+            if elapsed >= 2500:
                 # Restart the game
                 self.game_stage = 0
                 self.player1_menu_choice = None
@@ -330,6 +347,7 @@ class GameMenu(PyGameMenu):
                     elapsed = duration
                     self.animation_stage = 3
                     self.game_stage = 4  # Game over
+                    self.update_scores()
                 progress = elapsed / duration
                 # Compute hand positions
                 player1_hand_pos = ((screen.get_width() // 2 - self.player_hands[0]["rock"].get_width() - 50 + 15),
@@ -382,9 +400,12 @@ class GameMenu(PyGameMenu):
             p2_text = font.render(f"Player Red chose: {self.player2_menu_choice}" if not self.is_against_machine else f"Machine chose: {self.player2_menu_choice}", True, (255, 255, 255))
             ui_surface.blit(p2_text, (screen.get_width() // 2 - p2_text.get_width() // 2, 250))
             
-            if winner != 0:
+            if winner != 0 and self.is_game_over():
                 restart_text = player_choice_font.render("Press Enter or Space to play again", True, (255, 128, 0))
                 ui_surface.blit(restart_text, (screen.get_width() // 2 - restart_text.get_width() // 2, screen.get_height() - restart_text.get_height() - 20))
+            elif winner != 0 and not self.is_game_over():
+                next_text = player_choice_font.render("Next round starting in 2.5 seconds...", True, (255, 128, 0))
+                ui_surface.blit(next_text, (screen.get_width() // 2 - next_text.get_width() // 2, screen.get_height() - next_text.get_height() - 20))
             else:
                 tie_text = player_choice_font.render("It's a tie! Restarting in 5 seconds...", True, (255, 128, 0))
                 ui_surface.blit(tie_text, (screen.get_width() // 2 - tie_text.get_width() // 2, screen.get_height() - tie_text.get_height() - 20))
@@ -429,3 +450,21 @@ class GameMenu(PyGameMenu):
         if winning_combinations[self.player1_menu_choice] == self.player2_menu_choice:
             return 1  # Player 1 wins
         return 2  # Player 2 wins
+
+    def is_game_over(self) -> bool:
+        """Check if the game is over."""
+        if self.game_stage == 4 and self.player_scores[0] >= 3:
+            return True
+        if self.game_stage == 4 and self.player_scores[1] >= 3:
+            return True
+        
+        return False
+    
+    def update_scores(self):
+        """Update the scores based on the current choices."""
+        winner = self.get_winner()
+        if winner == 1:
+            self.player_scores[0] += 1
+        elif winner == 2:
+            self.player_scores[1] += 1
+        print("Scores updated:", self.player_scores)
