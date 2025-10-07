@@ -43,6 +43,8 @@ RockPaperScissors/
 └── src/
     ├── assets/
     │   ├── images/
+    │   │   ├── blue_hands/
+    │   │   └── red_hands/
     │   ├── shaders/
     │   └── test/
     └── scripts/
@@ -70,6 +72,6 @@ You are free to use and modify it for **non-commercial purposes** with proper at
 ## 🙌 Credits
 
 Developed by **CLÉMENT Timothé** and **CORDONNIER MAXIME**.
-Special thanks to **localthunk** used in the visual version **(https://www.playbalatro.com)**.
+Special thanks to **localthunk** for the shader **(https://www.playbalatro.com)**.
 
 Enjoy the game and have fun throwing your virtual hands! ✊ 🖐️ ✌️
