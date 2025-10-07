@@ -14,6 +14,11 @@ It’s designed to be lightweight and easy to run — whether you’re coding al
 - **Player vs Computer** — take on an AI opponent that plays randomly
 - **Player vs Player** — compete locally with a friend on the same machine  
 
+## Requirements
+
+- Python 3.10
+- OpenGL 3.3
+- Windows 11 (other OS not tested)
 
 ## ⚙️ Installation
 
@@ -27,39 +32,39 @@ pip install PyOpenGL PyOpenGL_accelerate pygame
 
 ## 🚀 Usage
 
-You can lauch the game by _**TODO**_
+You can lauch the game by launching "**launch.cmd**" or, from a terminal copy and paste `py main.py` from the root folder of the project.
 
 After the launch of the game, you can choose to play the game either **directly in the terminal**, or **launch it in a pygame/OpenGL UI** when prompted by typing "**terminal**" (or "**t**") or "**gui**" (or "**g**").
 
-You can stop the game at any moment in the terminal by typing "**stop**".
-
+In the **terminal version**, you can stop the game at any moment in the terminal by typing "**stop**".
+In the **PyGame** version, you can simply close the window.
 ## 📁 Project Structure
 
 ```python
 RockPaperScissors/
-├── LISCENCE
-├── main.py
+├── LICENCE                                 # Project license
+├── main.py                                 # Game entry point
+├── launch.cmd                              # Shortcut to launch the game
 ├── README.md
 └── src/
-    ├── assets/
-    │   ├── images/
-    │   │   ├── blue_hands/
-    │   │   └── red_hands/
-    │   ├── shaders/
-    │   └── test/
-    └── scripts/
-        ├── game_booter/
-        ├── gui_version/
-        │   ├── game_state_manager/
-        │   ├── gpu_graphics/
-        │   ├── gui_game/
-        │   ├── gui_utils/
-        │   └── menus/
-        │       ├── chose_gamemode_menu/
-        │       └── main_menu/
-        └── terminal_vesion/
-            ├── terminal_game/
-            └── terminal_utils/
+    ├── assets/                             # Folder containing the various assets for the game
+    │   ├── images/                         # Folder containing the image assets for the game
+    │   ├── shaders/                        # Folder containing the shader assets for the game
+    │   └── text/                           # Folder containing the text assets for the game
+    └── scripts/                            # Folder containing the project's scripts
+        ├── game_booter/                    # Folder containing the function to lauch either version of the game
+        ├── gui_version/                    # Folder containing the various modules for the GUI version
+        │   ├── game_state_manager/         # Folder conatining two classes allowing to change between menus
+        │   ├── gpu_graphics/               # Folder conatining various functions handling the graphic display (mainly OpenGL)
+        │   ├── gui_game/                   # Folder conteining the main GUI game module.
+        │   ├── gui_utils/                  # Folder containing various functions for the GUI version
+        │   └── menus/                      # Folder containing the various game menus
+        │       ├── main_menu/              # Folder containing the main menu module
+        │       ├── chose_gamemode_menu/    # Folder containing the game mode choice menu module
+        │       └── game_menu/              # Folder containing the main game module
+        └── terminal_vesion/                # Folder containing the various modules for the terminal version
+            ├── terminal_game/              # Folder conteining the main terminal game module.
+            └── terminal_utils/             # Folder containing various functions for terminal formating and styling
 ```
 
 ## 📜 License
