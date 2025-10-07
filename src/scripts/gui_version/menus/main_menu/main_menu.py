@@ -1,38 +1,28 @@
 """Module for the main menu."""
 
-import os
-import random
-
 import pygame
 
 from src.scripts.gui_version.game_state_manager.game_state_manager import StateManager
-from src.scripts.gui_version.gpu_graphics.gpu_graphics import GPUBackground
 from src.scripts.gui_version.gui_utils.gui_utils import PyGameMenu, render_surface_fullscreen
 from src.scripts.gui_version.menus.chose_gamemode_menu.chose_gamemode_menu import ChoseGameModeMenu
+from src.scripts.gui_version.gpu_graphics.gpu_graphics import GPUBackground
 
 
 class MainMenu(PyGameMenu):
     """Class to handle the main menu."""
 
-    def __init__(self, manager: StateManager, screen: pygame.Surface, bg=None):
-        super().__init__(manager, screen, bg=bg)
-
-        # Menu options (will set factories after background is initialized)
-        self.buttons = []
+    def __init__(self, manager: StateManager, screen: pygame.Surface, bg : GPUBackground):
+        super().__init__(manager, screen, bg)
 
         # Background info
         self.selected_index = 0
 
-        # Set up background (use shared bg if provided)
+        # Set up background
         self.bg = bg
 
-        # Now that the background and screen are available, set button factories
-        # The 'Start Game' entry produces a ChoseGameModeMenu instance when invoked
-        # When creating the ChoseGameModeMenu, provide a back_factory that
-        # creates a fresh MainMenu when invoked. This avoids the Chose menu
-        # importing MainMenu directly and breaks circular imports.
+        # Menu buttons with factories that need self.bg
         self.buttons = [
-            ("Start Game", lambda mgr: ChoseGameModeMenu(mgr, screen, self.bg, back_factory=lambda m: MainMenu(m, screen, bg=self.bg))),
+            ("Start Game", lambda mgr: ChoseGameModeMenu(mgr, screen, self.bg, back_factory=lambda m: MainMenu(m, screen, self.bg))),
             ("Quit", None)
         ]
         # font and texture cache for OpenGL-rendered text
@@ -77,12 +67,6 @@ class MainMenu(PyGameMenu):
             pygame.draw.rect(ui_surface, (0, 0, 0, 150), rect)
             text = self.font.render(label, True, color)
             ui_surface.blit(text, (rect.x + 10, rect.y + 10))
-        
-        
 
         # Render the UI surface to the screen
         render_surface_fullscreen(ui_surface)
-
-    def update_size(self, width, height):
-        """Update the size of the background."""
-        self.bg.update_size(width, height)

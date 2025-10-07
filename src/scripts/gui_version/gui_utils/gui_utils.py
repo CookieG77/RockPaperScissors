@@ -7,13 +7,13 @@ from src.scripts.gui_version.game_state_manager.game_state_manager import StateM
 class PyGameMenu:
     """Class to handle PyGame menu operations."""
 
-    def __init__(self, manager: StateManager, screen: pygame.Surface, bg=None):
+    def __init__(self, manager: StateManager, screen: pygame.Surface, bg):
         """Base menu class.
 
         Parameters:
         - manager: StateManager that owns this state
         - screen: pygame display surface
-        - bg: optional shared GPUBackground instance to render behind the UI
+        - bg: shared GPUBackground instance to render behind the UI
         """
         self.manager = manager
         self.screen = screen
@@ -29,6 +29,10 @@ class PyGameMenu:
 
     def draw(self, screen: pygame.Surface):
         """Draw menu to the screen."""
+        
+    def update_size(self, width: int, height: int):
+        """Update the size of the background."""
+        self.bg.update_size(width, height)
 
 
 def _constrain_to_aspect(w: int, h: int, aspect: float, min_w: int=200, min_h: int=150, max_w: int=3840, max_h: int=2160):
