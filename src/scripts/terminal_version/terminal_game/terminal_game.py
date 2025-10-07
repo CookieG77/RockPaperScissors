@@ -103,6 +103,19 @@ def start_terminal_game():
     # Start the game loop
     print("Type 'stop' to end the game at any time.\n")
     while True:
+        if scores[0] == 3 or scores[1] == 3:
+            print(set_text_color(92, "Game over! Final scores:"))
+            if playing_against_machine:
+                print(
+                    f"{set_text_color(94, 'Player')}: {scores[0]} - {set_text_color(91, 'Computer')}: {scores[1]}"
+                )
+            else:
+                print(
+                    f"{set_text_color(94, 'First player')}: {scores[0]} - {set_text_color(91, 'Second player')}: {scores[1]}"
+                )
+            print()
+            scores = [0, 0]  # reset scores
+            break
         first_player_choice = get_input(
             f"{set_text_color(34, 'First player')}: choose rock, paper, or scissors: "
         )
@@ -153,25 +166,11 @@ def start_terminal_game():
                 print(
                     f"{set_text_color(93, 'Scores')}: {set_text_color(94, 'Player')} {scores[0]} - {set_text_color(91, 'Computer')} {scores[1]}"
                 )
-                # print(
-                #     loading_animation(
-                #         duration=5,
-                #         prefix=f"{set_text_color(94, 'You win!')} (Restarting in 5 seconds",
-                #         suffix=")",
-                #     )
-                # )
                 print_animation(f"{set_text_color(94, 'You win!')} (Restarting in 5 seconds {{}})", 5)
             else:
                 print(
                     f"{set_text_color(93, 'Scores')}: {set_text_color(94, 'First player')} {scores[0]} - {set_text_color(91, 'Second player')} {scores[1]}"
                 )
-                # print(
-                #     loading_animation(
-                #         duration=5,
-                #         prefix=f"{set_text_color(94, 'First player wins!')} (Restarting in 5 seconds",
-                #         suffix=")",
-                #     )
-                # )
                 print_animation(f"{set_text_color(94, 'First player wins!')} (Restarting in 5 seconds {{}})", 5)
         else:
             scores[1] += 1
@@ -179,25 +178,11 @@ def start_terminal_game():
                 print(
                     f"{set_text_color(93, 'Scores')}: {set_text_color(94, 'Player')} {scores[0]} - {set_text_color(91, 'Computer')} {scores[1]}"
                 )
-                # print(
-                #     loading_animation(
-                #         duration=5,
-                #         prefix=f"{set_text_color(91, 'Computer wins!')} (Restarting in 5 seconds",
-                #         suffix=")",
-                #     )
-                # )
                 print_animation(f"{set_text_color(91, 'Computer wins!')} (Restarting in 5 seconds {{}})", 5)
             else:
                 print(
                     f"{set_text_color(93, 'Scores')}: {set_text_color(94, 'First player')} {scores[0]} - {set_text_color(91, 'Second player')} {scores[1]}"
                 )
-                # print(
-                #     loading_animation(
-                #         duration=5,
-                #         prefix=f"{set_text_color(91, 'Second player wins!')} (Restarting in 5 seconds",
-                #         suffix=")",
-                #     )
-                # )
                 print_animation(f"{set_text_color(91, 'Second player wins!')} (Restarting in 5 seconds {{}})", 5)
         clear_cmd()
         print("Type 'stop' to end the game at any time.\n")
