@@ -155,7 +155,10 @@ class RPSDatabase(Database):
 
     def __init__(self, db_name : str = "rps_game.db"):
         """Initialize the RPS database."""
-        super().__init__(db_name)
+        pepper = os.getenv("pepper")
+        if not pepper:
+            pepper = ""
+        super().__init__(db_name, pepper=pepper)
         RPSDatabase.db = self
         self._init_tables()
 
@@ -187,6 +190,29 @@ class RPSDatabase(Database):
     def add_defeat(self, user_id : int) -> None:
         """Increment the defeat count for a user."""
         self.execute("UPDATE scores SET defeats = defeats + 1 WHERE user_id = ?", (user_id,))
+
+    def get_user_scores(self, user_id : int) -> tuple[int, int]:
+        """Get the victory and defeat counts for a user."""
+        self.cursor.execute("SELECT victories, defeats FROM scores WHERE user_id = ?", (user_id,))
+        return self.cursor.fetchone() or (0, 0)
+
+    def check_user_credentials_by_gamertag(self, gamertag : str, password : str) -> bool:
+        """Check if the provided gamertag and password match a user in the database."""
+        self.cursor.execute("SELECT hashed_password, salt FROM users WHERE gamertag = ?", (gamertag,))
+        result = self.cursor.fetchone()
+        if result:
+            stored_hashed_password, salt = result
+            return stored_hashed_password == self._hash(password, salt)
+        return False
+
+    def check_user_credentials_by_id(self, user_id: int, password: str) -> bool:
+        """Check if the provided user ID and password match a user in the database."""
+        self.cursor.execute("SELECT hashed_password, salt FROM users WHERE id = ?", (user_id,))
+        result = self.cursor.fetchone()
+        if result:
+            stored_hashed_password, salt = result
+            return stored_hashed_password == self._hash(password, salt)
+        return False
 
     def close(self) -> None:
         """Close the RPS database connection."""

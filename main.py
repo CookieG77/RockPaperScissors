@@ -10,3 +10,5 @@ if __name__ == "__main__":
     db.insert_user("xX_ProGamer69_Xx", "my_secure_password_123", "random_salt_value")
     db.add_victory(1)
     db.print_database_info()
+    print(f"User 1 password {'is' if db.check_user_credentials('xX_ProGamer69_Xx', 'my_secure_password_123') else 'is not'} correct")
+    print(f"User 1 password {'is' if db.check_user_credentials(1, 'my_secure_password_123') else 'is not'} correct")
